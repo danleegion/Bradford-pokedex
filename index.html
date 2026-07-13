@@ -50,7 +50,7 @@
         .search-box {
             display: flex;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             background: white;
             padding: 8px;
             border-radius: 50px;
@@ -82,6 +82,95 @@
 
         button.search-btn:active {
             transform: scale(0.95);
+        }
+
+        /* Big Special Menu Button for A-Z View */
+        .az-toggle-btn {
+            background: #6c5ce7;
+            color: white;
+            border: 4px solid white;
+            padding: 12px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(108, 92, 231, 0.4);
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .az-toggle-btn:hover {
+            transform: translateY(-2px);
+            background: #5b4cc4;
+        }
+
+        /* Alphabet Menu Drawer */
+        .az-menu-box {
+            background: white;
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            display: none;
+            border: 4px solid #6c5ce7;
+        }
+
+        .letter-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+
+        .letter-btn {
+            background: #f1f2f6;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #2d3436;
+            transition: all 0.1s ease;
+        }
+
+        .letter-btn.active {
+            background: #6c5ce7;
+            color: white;
+            transform: scale(1.15);
+        }
+
+        .pokemon-results-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f5f6fa;
+            border-radius: 16px;
+        }
+
+        .list-poke-badge {
+            background: white;
+            border: 2px solid #b2bec3;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            text-transform: capitalize;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .list-poke-badge:hover {
+            border-color: #6c5ce7;
+            background: #e8f4f8;
         }
 
         /* Quick Pick Buttons for Easy Tapping */
@@ -172,7 +261,7 @@
             gap: 6px;
         }
 
-        /* Vibrant Kid-friendly Type Palette */
+        /* Kid-friendly Type Palette */
         .normal { background-color: #95afc0; }
         .fire { background-color: #ff7675; }
         .water { background-color: #74b9ff; }
@@ -228,27 +317,38 @@
             color: #747d8c;
             font-weight: bold;
             text-transform: uppercase;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .evo-row {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
             align-items: center;
         }
 
+        #evo-from, #evo-to {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        /* Visual Thumbnail Badge Config */
         .evo-badge {
             background: white;
             border: 2px solid #e1b12c;
-            padding: 6px 16px;
+            padding: 4px 14px 4px 6px;
             border-radius: 50px;
-            font-size: 16px;
+            font-size: 15px;
             text-transform: capitalize;
             color: #2c3a47;
             cursor: pointer;
             font-weight: 600;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             box-shadow: 0 3px 6px rgba(0,0,0,0.05);
             transition: all 0.2s ease;
         }
@@ -258,10 +358,21 @@
             transform: scale(1.05);
         }
 
+        .evo-thumb {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            background: #f1f2f6;
+            border-radius: 50%;
+            padding: 2px;
+        }
+
         .evo-empty {
             color: #a4b0be;
             font-style: italic;
             font-size: 14px;
+            display: inline-block;
+            padding: 6px 0;
         }
 
         /* Loading Animation Container */
@@ -313,13 +424,22 @@
         <button class="search-btn" onclick="handleSearch()">Go! 🚀</button>
     </div>
 
+    <button class="az-toggle-btn" onclick="toggleAlphabetMenu()">📖 Open Alphabet Book</button>
+
+    <div id="az-menu" class="az-menu-box">
+        <div style="font-size: 14px; font-weight: bold; margin-bottom: 10px; color: #6c5ce7;">Pick a letter to find Pokémon!</div>
+        <div class="letter-grid" id="alphabet-letters"></div>
+        <div class="pokemon-results-list" id="alphabet-pokemon-results">
+            <span style="color: #a4b0be; font-style: italic; font-size: 14px; margin: auto;">Tap a letter above!</span>
+        </div>
+    </div>
+
     <div class="quick-picks">
         <button class="quick-btn" onclick="loadPokedex('pikachu')">⚡ Pikachu</button>
         <button class="quick-btn" onclick="loadPokedex('charizard')">🔥 Charizard</button>
         <button class="quick-btn" onclick="loadPokedex('blastoise')">💧 Blastoise</button>
         <button class="quick-btn" onclick="loadPokedex('bulbasaur')">🌿 Bulbasaur</button>
         <button class="quick-btn" onclick="loadPokedex('eevee')">📦 Eevee</button>
-        <button class="quick-btn" onclick="loadPokedex('jigglypuff')">🎈 Jigglypuff</button>
     </div>
 
     <div id="loading" class="loading-overlay">
@@ -346,11 +466,11 @@
                 <div class="evolution-title">🧬 Evolution Family</div>
                 <div class="evo-row">
                     <div>
-                        <span style="font-size:13px; color:#747d8c; display:block; margin-bottom:2px;">Evolves From:</span>
+                        <span style="font-size:13px; color:#747d8c; display:block; text-align: center;">Evolves From:</span>
                         <div id="evo-from"></div>
                     </div>
-                    <div style="margin-top: 8px;">
-                        <span style="font-size:13px; color:#747d8c; display:block; margin-bottom:2px;">Evolves Into:</span>
+                    <div style="margin-top: 6px;">
+                        <span style="font-size:13px; color:#747d8c; display:block; text-align: center;">Evolves Into:</span>
                         <div id="evo-to"></div>
                     </div>
                 </div>
@@ -360,13 +480,85 @@
 </div>
 
 <script>
-// Dictionary connecting common type names to simple emojis for child context
 const typeEmojis = {
     fire: '🔥', water: '💧', grass: '🌿', electric: '⚡', normal: '⭐',
     ice: '❄️', fighting: '🥊', poison: '🧪', ground: '⏳', flying: '🍃',
     psychic: '🔮', bug: '🐛', rock: '🪨', ghost: '👻', dragon: '🐉',
     steel: '⚙️', fairy: '✨'
 };
+
+let globalPokemonMasterList = [];
+
+async function initializeAlphabetIndex() {
+    try {
+        const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1025');
+        const data = await res.json();
+        
+        globalPokemonMasterList = data.results
+            .map(p => p.name)
+            .filter(name => !name.includes('-')) 
+            .sort((a, b) => a.localeCompare(b));
+
+        buildAlphabetButtons();
+    } catch (e) {
+        console.error("Could not build directory menu", e);
+    }
+}
+
+function buildAlphabetButtons() {
+    const lettersContainer = document.getElementById('alphabet-letters');
+    lettersContainer.innerHTML = '';
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    
+    alphabet.forEach(letter => {
+        const btn = document.createElement('button');
+        btn.className = 'letter-btn';
+        btn.innerText = letter;
+        btn.onclick = () => showPokemonForLetter(letter, btn);
+        lettersContainer.appendChild(btn);
+    });
+}
+
+function showPokemonForLetter(letter, clickedButton) {
+    document.querySelectorAll('.letter-btn').forEach(b => b.classList.remove('active'));
+    clickedButton.classList.add('active');
+
+    const resultsContainer = document.getElementById('alphabet-pokemon-results');
+    resultsContainer.innerHTML = '';
+
+    const filteredList = globalPokemonMasterList.filter(name => 
+        name.toUpperCase().startsWith(letter)
+    );
+
+    if(filteredList.length === 0) {
+        resultsContainer.innerHTML = '<span style="font-size:14px; color:#a4b0be; margin:auto;">No Pokémon found!</span>';
+        return;
+    }
+
+    filteredList.forEach(name => {
+        const badge = document.createElement('span');
+        badge.className = 'list-poke-badge';
+        badge.innerText = name;
+        badge.onclick = () => {
+            document.getElementById('search-input').value = name;
+            loadPokedex(name);
+            toggleAlphabetMenu(); 
+        };
+        resultsContainer.appendChild(badge);
+    });
+}
+
+function toggleAlphabetMenu() {
+    const menu = document.getElementById('az-menu');
+    const toggleBtn = document.querySelector('.az-toggle-btn');
+    if (menu.style.display === 'block') {
+        menu.style.display = 'none';
+        toggleBtn.innerText = "📖 Open Alphabet Book";
+    } else {
+        menu.style.display = 'block';
+        toggleBtn.innerText = "📕 Close Alphabet Book";
+    }
+}
 
 async function loadPokedex(name) {
     if (!name) return;
@@ -375,19 +567,16 @@ async function loadPokedex(name) {
     document.getElementById('pokedex-card').style.display = 'none';
 
     try {
-        // 1. Core Profile Fetching
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase().trim()}`);
         if (!response.ok) throw new Error("Not found");
         const data = await response.json();
 
         document.getElementById('poke-name').innerText = data.name;
         
-        // Artwork pipeline layout selection
         const officialArtwork = data.sprites.other['official-artwork'].front_default;
         const fallbackSprite = data.sprites.front_default;
         document.getElementById('poke-img').src = officialArtwork || fallbackSprite || '';
 
-        // 2. Clear Type Badges Rendering
         const typesContainer = document.getElementById('poke-types');
         typesContainer.innerHTML = '';
         
@@ -400,7 +589,6 @@ async function loadPokedex(name) {
             typesContainer.appendChild(badge);
         });
 
-        // 3. Special Move Extractor via Level-Up Priority Sorting
         const levelUpMoves = [];
         data.moves.forEach(m => {
             const levelDetails = m.version_group_details.find(detail => 
@@ -418,7 +606,6 @@ async function loadPokedex(name) {
         const signatureMove = levelUpMoves.length > 0 ? levelUpMoves[0].name : "Tackle";
         document.getElementById('poke-move').innerText = signatureMove;
 
-        // 4. Nested Species & Evolution Tree Extraction 
         const speciesResponse = await fetch(data.species.url);
         const speciesData = await speciesResponse.json();
         
@@ -437,7 +624,6 @@ async function loadPokedex(name) {
     }
 }
 
-// Map logic for tracing target positions across tree matrices
 function renderEvolutionChain(chain, currentName) {
     let fromElement = document.getElementById('evo-from');
     let toElement = document.getElementById('evo-to');
@@ -489,14 +675,36 @@ function renderEvolutionChain(chain, currentName) {
     }
 }
 
+// Generates an interactive horizontal badge with an asynchronous profile picture pipeline
 function createEvoBadge(name) {
-    const badge = document.createElement('span');
+    const badge = document.createElement('div');
     badge.className = 'evo-badge';
-    badge.innerText = name;
+    
+    const img = document.createElement('img');
+    img.className = 'evo-thumb';
+    // Transparent spacer placeholder background until api callback clears
+    img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; 
+    
+    const text = document.createElement('span');
+    text.innerText = name;
+    
+    badge.appendChild(img);
+    badge.appendChild(text);
+    
     badge.onclick = () => {
         document.getElementById('search-input').value = name;
         loadPokedex(name);
     };
+    
+    // Asynchronously fetch sprite picture directly into the element shell 
+    fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
+        .then(res => res.json())
+        .then(data => {
+            const sprite = data.sprites.front_default || data.sprites.other['official-artwork'].front_default;
+            if (sprite) img.src = sprite;
+        })
+        .catch(err => console.error("Thumbnail load skipped:", err));
+        
     return badge;
 }
 
@@ -511,7 +719,7 @@ document.getElementById('search-input').addEventListener('keypress', function (e
     }
 });
 
-// Boot Default Configuration View
+initializeAlphabetIndex();
 loadPokedex('pikachu');
 </script>
 
