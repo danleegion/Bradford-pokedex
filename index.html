@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bradford's Pokédex 🌈</title>
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-   
-    <link rel="apple-touch-icon" href="pokeball.png">
-<link rel="icon" type="image/png" href="pokeball.png">
-
-
+    <meta name="mobile-web-app-capable" content="yes">
     
-    <title>Bradford's Pokédex 🌈</title>
+    <link rel="apple-touch-icon" href="pokeball.png">
+    <link rel="icon" type="image/png" href="pokeball.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
@@ -153,59 +153,134 @@
             transform: scale(1.15);
         }
 
+        /* Improved Scroll Window for Alphabet Explorer */
         .pokemon-results-list {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 8px;
-            max-height: 200px;
-            overflow-y: auto;
-            padding: 10px;
+            max-height: 240px;
+            overflow-y: scroll; /* Forces scroll framework to always stay active */
+            padding: 12px;
             background: #f5f6fa;
             border-radius: 16px;
+            border: 2px inset rgba(0,0,0,0.05);
         }
 
+        /* Thick Custom Kid-Friendly Scrollbar */
+        .pokemon-results-list::-webkit-scrollbar {
+            width: 12px;
+        }
+        .pokemon-results-list::-webkit-scrollbar-track {
+            background: #e1b12c;
+            border-radius: 10px;
+        }
+        .pokemon-results-list::-webkit-scrollbar-thumb {
+            background: #6c5ce7;
+            border-radius: 10px;
+            border: 2px solid #e1b12c;
+        }
+
+        /* Visual List Badge Settings */
         .list-poke-badge {
             background: white;
             border: 2px solid #b2bec3;
-            padding: 6px 14px;
-            border-radius: 20px;
+            padding: 4px 12px 4px 4px;
+            border-radius: 50px;
             font-size: 14px;
             text-transform: capitalize;
             cursor: pointer;
             font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+            transition: all 0.1s ease;
         }
 
         .list-poke-badge:hover {
             border-color: #6c5ce7;
             background: #e8f4f8;
+            transform: scale(1.02);
         }
 
-        /* Quick Pick Buttons for Easy Tapping */
+        .list-poke-thumb {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            background: #f1f2f6;
+            border-radius: 50%;
+        }
+
+        /* Discovery Row Setup */
+        .quick-discovery-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 10px;
+            border-radius: 30px;
+            border: 2px dashed white;
+        }
+
         .quick-picks {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 8px;
-            margin-bottom: 25px;
+            gap: 6px;
         }
 
         .quick-btn {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.95);
             border: 2px solid white;
-            padding: 8px 16px;
-            border-radius: 20px;
+            padding: 4px 12px 4px 4px;
+            border-radius: 50px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             text-transform: capitalize;
             transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
         }
 
         .quick-btn:hover {
             background: white;
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .quick-thumb {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+            background: #f1f2f6;
+            border-radius: 50%;
+        }
+
+        .shuffle-btn {
+            background: #f9ca24;
+            color: #2c3e50;
+            border: 2px solid white;
+            padding: 8px 14px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .shuffle-btn:hover {
+            transform: scale(1.05) rotate(5deg);
+            background: #f1c40f;
         }
 
         /* Main Pokédex Display Card */
@@ -343,11 +418,10 @@
             margin-top: 4px;
         }
 
-        /* Visual Thumbnail Badge Config */
         .evo-badge {
             background: white;
             border: 2px solid #e1b12c;
-            padding: 4px 14px 4px 6px;
+            padding: 4px 14px 4px 4px;
             border-radius: 50px;
             font-size: 15px;
             text-transform: capitalize;
@@ -372,7 +446,6 @@
             object-fit: contain;
             background: #f1f2f6;
             border-radius: 50%;
-            padding: 2px;
         }
 
         .evo-empty {
@@ -435,19 +508,22 @@
     <button class="az-toggle-btn" onclick="toggleAlphabetMenu()">📖 Open Alphabet Book</button>
 
     <div id="az-menu" class="az-menu-box">
-        <div style="font-size: 14px; font-weight: bold; margin-bottom: 10px; color: #6c5ce7;">Pick a letter to find Pokémon!</div>
+        <div style="font-size: 15px; font-weight: bold; margin-bottom: 12px; color: #6c5ce7;">Pick a letter to look at pictures!</div>
         <div class="letter-grid" id="alphabet-letters"></div>
+        
+        <div id="scroll-instruction" style="font-size: 13px; font-weight: bold; color: #747d8c; margin-bottom: 6px; display: none;">
+            👇 Scroll down to see them all! 👇
+        </div>
+        
         <div class="pokemon-results-list" id="alphabet-pokemon-results">
             <span style="color: #a4b0be; font-style: italic; font-size: 14px; margin: auto;">Tap a letter above!</span>
         </div>
     </div>
 
-    <div class="quick-picks">
-        <button class="quick-btn" onclick="loadPokedex('pikachu')">⚡ Pikachu</button>
-        <button class="quick-btn" onclick="loadPokedex('charizard')">🔥 Charizard</button>
-        <button class="quick-btn" onclick="loadPokedex('blastoise')">💧 Blastoise</button>
-        <button class="quick-btn" onclick="loadPokedex('bulbasaur')">🌿 Bulbasaur</button>
-        <button class="quick-btn" onclick="loadPokedex('eevee')">📦 Eevee</button>
+    <div class="quick-discovery-wrapper">
+        <div class="quick-picks" id="quick-picks-container">
+            </div>
+        <button class="shuffle-btn" onclick="generateRandomQuickPicks()">🔄 Mix!</button>
     </div>
 
     <div id="loading" class="loading-overlay">
@@ -502,12 +578,18 @@ async function initializeAlphabetIndex() {
         const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1025');
         const data = await res.json();
         
+        // Map data arrays into readable objects tracking internal index sequences
         globalPokemonMasterList = data.results
-            .map(p => p.name)
-            .filter(name => !name.includes('-')) 
-            .sort((a, b) => a.localeCompare(b));
+            .filter(p => !p.name.includes('-')) 
+            .map(p => {
+                const urlParts = p.url.split('/');
+                const id = urlParts[urlParts.length - 2];
+                return { name: p.name, id: id };
+            })
+            .sort((a, b) => a.name.localeCompare(b.name));
 
         buildAlphabetButtons();
+        generateRandomQuickPicks(); // Load unique random pick options instantly
     } catch (e) {
         console.error("Could not build directory menu", e);
     }
@@ -532,27 +614,77 @@ function showPokemonForLetter(letter, clickedButton) {
     clickedButton.classList.add('active');
 
     const resultsContainer = document.getElementById('alphabet-pokemon-results');
+    const scrollInstruction = document.getElementById('scroll-instruction');
     resultsContainer.innerHTML = '';
 
-    const filteredList = globalPokemonMasterList.filter(name => 
-        name.toUpperCase().startsWith(letter)
+    const filteredList = globalPokemonMasterList.filter(poke => 
+        poke.name.toUpperCase().startsWith(letter)
     );
 
     if(filteredList.length === 0) {
+        scrollInstruction.style.display = 'none';
         resultsContainer.innerHTML = '<span style="font-size:14px; color:#a4b0be; margin:auto;">No Pokémon found!</span>';
         return;
     }
 
-    filteredList.forEach(name => {
-        const badge = document.createElement('span');
+    // Toggle the scroll helper text if list is long enough
+    scrollInstruction.style.display = filteredList.length > 6 ? 'block' : 'none';
+
+    filteredList.forEach(poke => {
+        const badge = document.createElement('div');
         badge.className = 'list-poke-badge';
-        badge.innerText = name;
+        
+        const img = document.createElement('img');
+        img.className = 'list-poke-thumb';
+        // Using fast direct layout link from pokeapi raw database repository bypassing asynchronous lag
+        img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${poke.id}.png`;
+        img.loading = "lazy";
+        
+        const text = document.createElement('span');
+        text.innerText = poke.name;
+        
+        badge.appendChild(img);
+        badge.appendChild(text);
+        
         badge.onclick = () => {
-            document.getElementById('search-input').value = name;
-            loadPokedex(name);
+            document.getElementById('search-input').value = poke.name;
+            loadPokedex(poke.name);
             toggleAlphabetMenu(); 
         };
         resultsContainer.appendChild(badge);
+    });
+    
+    // Auto reset the container view track back to top position on entry click 
+    resultsContainer.scrollTop = 0;
+}
+
+// Generate 5 distinct random items to spark exploration and discovery
+function generateRandomQuickPicks() {
+    if (globalPokemonMasterList.length === 0) return;
+    const container = document.getElementById('quick-picks-container');
+    container.innerHTML = '';
+    
+    const shufflePool = [...globalPokemonMasterList].sort(() => 0.5 - Math.random());
+    const sampleSelection = shufflePool.slice(0, 5);
+    
+    sampleSelection.forEach(poke => {
+        const btn = document.createElement('button');
+        btn.className = 'quick-btn';
+        btn.onclick = () => {
+            document.getElementById('search-input').value = poke.name;
+            loadPokedex(poke.name);
+        };
+        
+        const img = document.createElement('img');
+        img.className = 'quick-thumb';
+        img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${poke.id}.png`;
+        
+        const text = document.createElement('span');
+        text.innerText = poke.name;
+        
+        btn.appendChild(img);
+        btn.appendChild(text);
+        container.appendChild(btn);
     });
 }
 
@@ -683,14 +815,12 @@ function renderEvolutionChain(chain, currentName) {
     }
 }
 
-// Generates an interactive horizontal badge with an asynchronous profile picture pipeline
 function createEvoBadge(name) {
     const badge = document.createElement('div');
     badge.className = 'evo-badge';
     
     const img = document.createElement('img');
     img.className = 'evo-thumb';
-    // Transparent spacer placeholder background until api callback clears
     img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; 
     
     const text = document.createElement('span');
@@ -704,7 +834,6 @@ function createEvoBadge(name) {
         loadPokedex(name);
     };
     
-    // Asynchronously fetch sprite picture directly into the element shell 
     fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
         .then(res => res.json())
         .then(data => {
