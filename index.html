@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My First Pokédex 🌈</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ff7675, #74b9ff, #55efc4, #ffeaa7);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: white;
+            font-size: 36px;
+            text-shadow: 3px 3px 0px #2d3436;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        /* Search & Filter Controls */
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 8px;
+            border-radius: 50px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        input {
+            flex: 1;
+            border: none;
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 50px;
+            outline: none;
+            background: #f1f2f6;
+        }
+
+        button.search-btn {
+            background: #ff7675;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            box-shadow: 0 4px 10px rgba(255, 118, 117, 0.4);
+        }
+
+        button.search-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Quick Pick Buttons for Easy Tapping */
+        .quick-picks {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+
+        .quick-btn {
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px solid white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: capitalize;
+            transition: all 0.2s ease;
+        }
+
+        .quick-btn:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Main Pokédex Display Card */
+        .pokedex-card {
+            background: white;
+            border-radius: 32px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+            border: 8px solid #fff;
+            transition: all 0.3s ease;
+        }
+
+        .poke-image-container {
+            background: #f1f2f6;
+            border-radius: 24px;
+            padding: 10px;
+            margin-bottom: 15px;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .poke-image {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .poke-name {
+            font-size: 32px;
+            text-transform: capitalize;
+            color: #2d3436;
+            margin: 10px 0 5px 0;
+        }
+
+        /* Type Badges */
+        .type-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .type-badge {
+            padding: 8px 20px;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Vibrant Kid-friendly Type Palette */
+        .normal { background-color: #95afc0; }
+        .fire { background-color: #ff7675; }
+        .water { background-color: #74b9ff; }
+        .electric { background-color: #f9ca24; color: #2d3436; }
+        .grass { background-color: #2ed573; }
+        .ice { background-color: #7ed6df; }
+        .fighting { background-color: #e55039; }
+        .poison { background-color: #a55eea; }
+        .ground { background-color: #d4a373; }
+        .flying { background-color: #a8c0ff; }
+        .psychic { background-color: #ff7979; }
+        .bug { background-color: #badc58; }
+        .rock { background-color: #9c88ff; }
+        .ghost { background-color: #8c7ae6; }
+        .dragon { background-color: #240b36; }
+        .steel { background-color: #dcdde1; }
+        .fairy { background-color: #ffb8b8; }
+
+        /* Special Move Layout */
+        .feature-box {
+            background: #fff3cd;
+            border: 3px dashed #ffc107;
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .feature-label {
+            font-size: 13px;
+            text-transform: uppercase;
+            color: #b7791f;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .move-name {
+            font-size: 24px;
+            color: #e15f41;
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+
+        /* Evolution Tracker Section */
+        .evolution-box {
+            background: #f1f2f6;
+            border-radius: 20px;
+            padding: 15px;
+        }
+
+        .evolution-title {
+            font-size: 14px;
+            color: #747d8c;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .evo-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .evo-badge {
+            background: white;
+            border: 2px solid #e1b12c;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 16px;
+            text-transform: capitalize;
+            color: #2c3a47;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-block;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+
+        .evo-badge:hover {
+            background: #ffeaa7;
+            transform: scale(1.05);
+        }
+
+        .evo-empty {
+            color: #a4b0be;
+            font-style: italic;
+            font-size: 14px;
+        }
+
+        /* Loading Animation Container */
+        .loading-overlay {
+            display: none;
+            font-size: 18px;
+            color: #2d3436;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .pokeball-spinner {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(to bottom, #ff4757 50%, white 50%);
+            border-radius: 50%;
+            border: 4px solid #2d3436;
+            position: relative;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px auto;
+        }
+
+        .pokeball-spinner::after {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: white;
+            border: 4px solid #2d3436;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🌈 My First Pokédex 🌈</h1>
+
+    <div class="search-box">
+        <input type="text" id="search-input" placeholder="Type a Pokémon name..." autocomplete="off">
+        <button class="search-btn" onclick="handleSearch()">Go! 🚀</button>
+    </div>
+
+    <div class="quick-picks">
+        <button class="quick-btn" onclick="loadPokedex('pikachu')">⚡ Pikachu</button>
+        <button class="quick-btn" onclick="loadPokedex('charizard')">🔥 Charizard</button>
+        <button class="quick-btn" onclick="loadPokedex('blastoise')">💧 Blastoise</button>
+        <button class="quick-btn" onclick="loadPokedex('bulbasaur')">🌿 Bulbasaur</button>
+        <button class="quick-btn" onclick="loadPokedex('eevee')">📦 Eevee</button>
+        <button class="quick-btn" onclick="loadPokedex('jigglypuff')">🎈 Jigglypuff</button>
+    </div>
+
+    <div id="loading" class="loading-overlay">
+        <div class="pokeball-spinner"></div>
+        Finding Pokémon...
+    </div>
+
+    <div class="pokedex-card" id="pokedex-card" style="display: none;">
+        <div class="card-content">
+            <div class="poke-image-container">
+                <img id="poke-img" class="poke-image" src="" alt="Pokemon">
+            </div>
+
+            <h2 id="poke-name" class="poke-name">Pokémon</h2>
+            
+            <div id="poke-types" class="type-container"></div>
+
+            <div class="feature-box">
+                <div class="feature-label">✨ Super Special Move ✨</div>
+                <div id="poke-move" class="move-name">Ultimate Attack</div>
+            </div>
+
+            <div class="evolution-box">
+                <div class="evolution-title">🧬 Evolution Family</div>
+                <div class="evo-row">
+                    <div>
+                        <span style="font-size:13px; color:#747d8c; display:block; margin-bottom:2px;">Evolves From:</span>
+                        <div id="evo-from"></div>
+                    </div>
+                    <div style="margin-top: 8px;">
+                        <span style="font-size:13px; color:#747d8c; display:block; margin-bottom:2px;">Evolves Into:</span>
+                        <div id="evo-to"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Dictionary connecting common type names to simple emojis for child context
+const typeEmojis = {
+    fire: '🔥', water: '💧', grass: '🌿', electric: '⚡', normal: '⭐',
+    ice: '❄️', fighting: '🥊', poison: '🧪', ground: '⏳', flying: '🍃',
+    psychic: '🔮', bug: '🐛', rock: '🪨', ghost: '👻', dragon: '🐉',
+    steel: '⚙️', fairy: '✨'
+};
+
+async function loadPokedex(name) {
+    if (!name) return;
+    
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('pokedex-card').style.display = 'none';
+
+    try {
+        // 1. Core Profile Fetching
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase().trim()}`);
+        if (!response.ok) throw new Error("Not found");
+        const data = await response.json();
+
+        document.getElementById('poke-name').innerText = data.name;
+        
+        // Artwork pipeline layout selection
+        const officialArtwork = data.sprites.other['official-artwork'].front_default;
+        const fallbackSprite = data.sprites.front_default;
+        document.getElementById('poke-img').src = officialArtwork || fallbackSprite || '';
+
+        // 2. Clear Type Badges Rendering
+        const typesContainer = document.getElementById('poke-types');
+        typesContainer.innerHTML = '';
+        
+        data.types.forEach(t => {
+            const typeName = t.type.name;
+            const emoji = typeEmojis[typeName] || '👾';
+            const badge = document.createElement('span');
+            badge.className = `type-badge ${typeName}`;
+            badge.innerHTML = `${emoji} ${typeName}`;
+            typesContainer.appendChild(badge);
+        });
+
+        // 3. Special Move Extractor via Level-Up Priority Sorting
+        const levelUpMoves = [];
+        data.moves.forEach(m => {
+            const levelDetails = m.version_group_details.find(detail => 
+                detail.move_learn_method.name === 'level-up'
+            );
+            if (levelDetails) {
+                levelUpMoves.push({
+                    name: m.move.name.replace(/-/g, ' '),
+                    level: levelDetails.level_learned_at
+                });
+            }
+        });
+        
+        levelUpMoves.sort((a, b) => b.level - a.level);
+        const signatureMove = levelUpMoves.length > 0 ? levelUpMoves[0].name : "Tackle";
+        document.getElementById('poke-move').innerText = signatureMove;
+
+        // 4. Nested Species & Evolution Tree Extraction 
+        const speciesResponse = await fetch(data.species.url);
+        const speciesData = await speciesResponse.json();
+        
+        const evoResponse = await fetch(speciesData.evolution_chain.url);
+        const evoData = await evoResponse.json();
+
+        renderEvolutionChain(evoData.chain, data.name);
+
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('pokedex-card').style.display = 'block';
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById('loading').style.display = 'none';
+        alert("Oops! Could not find that Pokémon. Let's try spelling it again! 🌈");
+    }
+}
+
+// Map logic for tracing target positions across tree matrices
+function renderEvolutionChain(chain, currentName) {
+    let fromElement = document.getElementById('evo-from');
+    let toElement = document.getElementById('evo-to');
+    
+    fromElement.innerHTML = '';
+    toElement.innerHTML = '';
+
+    let ancestralTrack = null;
+    let descendentTrack = [];
+    const searchTarget = currentName.toLowerCase();
+    let layer1_root = chain.species.name;
+
+    if (layer1_root === searchTarget) {
+        if (chain.evolves_to.length > 0) {
+            descendentTrack = chain.evolves_to.map(e => e.species.name);
+        }
+    } else {
+        for (let branch of chain.evolves_to) {
+            let layer2_name = branch.species.name;
+            
+            if (layer2_name === searchTarget) {
+                ancestralTrack = layer1_root;
+                if (branch.evolves_to.length > 0) {
+                    descendentTrack = branch.evolves_to.map(e => e.species.name);
+                }
+                break;
+            }
+            
+            let layer3_match = branch.evolves_to.find(leaf => leaf.species.name === searchTarget);
+            if (layer3_match) {
+                ancestralTrack = layer2_name;
+                break;
+            }
+        }
+    }
+
+    if (ancestralTrack) {
+        fromElement.appendChild(createEvoBadge(ancestralTrack));
+    } else {
+        fromElement.innerHTML = '<span class="evo-empty">First Form! No parents 🐣</span>';
+    }
+
+    if (descendentTrack.length > 0) {
+        descendentTrack.forEach(name => {
+            toElement.appendChild(createEvoBadge(name));
+        });
+    } else {
+        toElement.innerHTML = '<span class="evo-empty">Final Form! Max Level 🚀</span>';
+    }
+}
+
+function createEvoBadge(name) {
+    const badge = document.createElement('span');
+    badge.className = 'evo-badge';
+    badge.innerText = name;
+    badge.onclick = () => {
+        document.getElementById('search-input').value = name;
+        loadPokedex(name);
+    };
+    return badge;
+}
+
+function handleSearch() {
+    const val = document.getElementById('search-input').value;
+    if (val) loadPokedex(val);
+}
+
+document.getElementById('search-input').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        handleSearch();
+    }
+});
+
+// Boot Default Configuration View
+loadPokedex('pikachu');
+</script>
+
+</body>
+</html>
