@@ -316,11 +316,59 @@
             50% { transform: translateY(-10px); }
         }
 
+        /* Container to hold name and speaker button together */
+        .pokemon-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 10px 0 15px 0;
+        }
+
         .poke-name {
             font-size: 32px;
             text-transform: capitalize;
             color: #2d3436;
-            margin: 10px 0 5px 0;
+            margin: 0;
+        }
+
+        /* Kid-friendly Tactile Speaker Button */
+        .cry-btn {
+            background: #f1f2f6;
+            border: 2px solid #b2bec3;
+            font-size: 20px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            box-shadow: 0 4px 0 #b2bec3;
+            transition: all 0.1s ease;
+            user-select: none;
+            outline: none;
+        }
+
+        .cry-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #b2bec3;
+        }
+
+        /* Playback wiggle animation */
+        @keyframes cryWiggle {
+            0% { transform: rotate(0deg) scale(1.1); }
+            25% { transform: rotate(-12deg) scale(1.1); }
+            50% { transform: rotate(12deg) scale(1.1); }
+            75% { transform: rotate(-12deg) scale(1.1); }
+            100% { transform: rotate(0deg) scale(1.1); }
+        }
+
+        .cry-btn.playing {
+            animation: cryWiggle 0.4s ease infinite;
+            background-color: #f1c40f; /* Turns bright yellow! */
+            border-color: #e1b12c;
+            box-shadow: 0 4px 0 #d6a110;
         }
 
         /* Type Badges */
@@ -537,7 +585,10 @@
                 <img id="poke-img" class="poke-image" src="" alt="Pokemon">
             </div>
 
-            <h2 id="poke-name" class="poke-name">Pokémon</h2>
+            <div class="pokemon-header">
+                <h2 id="poke-name" class="poke-name">Pokémon</h2>
+                <button id="cry-btn" class="cry-btn" style="display: none;" title="Listen to Cry">🔊</button>
+            </div>
             
             <div id="poke-types" class="type-container"></div>
 
@@ -572,6 +623,7 @@ const typeEmojis = {
 };
 
 let globalPokemonMasterList = [];
+let activeCryAudio = null; // Globally tracks playing audio
 
 async function initializeAlphabetIndex() {
     try {
@@ -700,6 +752,74 @@ function toggleAlphabetMenu() {
     }
 }
 
+/**
+ * Handles playing the Pokémon cry with high compatibility (OGG + MP3 fallback)
+ */
+function playPokemonCry(oggUrl, pokemonName) {
+    // 1. Instantly stop any previous playing sound
+    if (activeCryAudio) {
+        activeCryAudio.pause();
+        activeCryAudio.currentTime = 0;
+    }
+
+    const cryBtn = document.getElementById('cry-btn');
+    const urlsToTry = [];
+
+    // Prioritize high-quality official PokéAPI OGG
+    if (oggUrl) {
+        urlsToTry.push(oggUrl);
+    }
+
+    // High compatibility MP3 fallback (Perfect for iOS/Safari browser systems)
+    if (pokemonName) {
+        const cleanName = pokemonName.toLowerCase()
+            .replace(/[.\s']/g, '')
+            .replace('-f', 'f')
+            .replace('-m', 'm');
+        urlsToTry.push(`https://play.pokemonshowdown.com/audio/cries/${cleanName}.mp3`);
+    }
+
+    let attemptIndex = 0;
+
+    function runQueue() {
+        if (attemptIndex >= urlsToTry.length) {
+            console.warn("Could not play cry in any audio format.");
+            if (cryBtn) cryBtn.classList.remove('playing');
+            return;
+        }
+
+        const currentUrl = urlsToTry[attemptIndex];
+        activeCryAudio = new Audio(currentUrl);
+
+        activeCryAudio.addEventListener('play', () => {
+            cryBtn.classList.add('playing');
+        });
+
+        activeCryAudio.addEventListener('ended', () => {
+            cryBtn.classList.remove('playing');
+        });
+
+        activeCryAudio.addEventListener('pause', () => {
+            cryBtn.classList.remove('playing');
+        });
+
+        activeCryAudio.play()
+            .catch(error => {
+                if (error.name === 'NotAllowedError') {
+                    // Triggers if browser blocks autoplay before user interaction. Safe to ignore.
+                    console.log("Autoplay blocked. Tap the speaker to hear the Pokémon!");
+                    cryBtn.classList.remove('playing');
+                } else {
+                    console.warn(`Failed to play ${currentUrl}. Trying fallback...`);
+                    attemptIndex++;
+                    runQueue();
+                }
+            });
+    }
+
+    runQueue();
+}
+
 async function loadPokedex(name) {
     if (!name) return;
     
@@ -716,6 +836,20 @@ async function loadPokedex(name) {
         const officialArtwork = data.sprites.other['official-artwork'].front_default;
         const fallbackSprite = data.sprites.front_default;
         document.getElementById('poke-img').src = officialArtwork || fallbackSprite || '';
+
+        // Handle Audio Cry Playback Setup
+        const cryBtn = document.getElementById('cry-btn');
+        const oggUrl = data.cries?.latest || data.cries?.legacy || '';
+
+        if (oggUrl) {
+            cryBtn.style.display = 'inline-flex';
+            cryBtn.onclick = () => playPokemonCry(oggUrl, data.name);
+            
+            // Try autoplaying right as the card loads
+            playPokemonCry(oggUrl, data.name);
+        } else {
+            cryBtn.style.display = 'none';
+        }
 
         const typesContainer = document.getElementById('poke-types');
         typesContainer.innerHTML = '';
